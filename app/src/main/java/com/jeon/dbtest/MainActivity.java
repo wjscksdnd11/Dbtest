@@ -24,11 +24,15 @@ SQLiteDatabase db;
         db.addCategory(1,"efesef");
         db.addCategory(2,"teswqw");
       db.addCategory(3,"tesq2esdas");
+        db.addSubCategory(1,"sdfe",1);
+        db.addSubCategory(2,"sdfe",3);
+        db.addSubCategory(3,"sdfe",4);
+
        Map<Integer,String> i= DBManager.getInstance().getMainCategories();
 //todo 이거 데이터 ㄱ클래스에서 대분류를 가져온다 . 그리고 대분류를 중심으로 쿼리를 알아서 처리해서 데이터클래스 세팅한 다음에 메소드에서 세팅.
 
 
-        Toast.makeText(MainActivity.this, ""+i.get(1), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, ""+DBManager.getInstance().getSubCategories(1)[0], Toast.LENGTH_SHORT).show();
 
 
 

@@ -115,7 +115,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     }
 
-    public long checkkeyword(String keyword) {
+    private long checkkeyword(String keyword) {
         String selection = CategoryKeywordData.Keyword.CULUMN_NAME + "=?";
         String[] args = {"" + keyword};
         String[] colums = {CategoryKeywordData.Keyword.CULUMN_NAME};
@@ -132,7 +132,7 @@ public class DBManager extends SQLiteOpenHelper {
         return -1;
     }
 
-    public long checkSubCategory(String category) {
+    private long checkSubCategory(String category) {
         String selection = CategoryKeywordData.SubCategory.CULUMN_NAME + "=?";
         String[] args = {"" + category};
         String[] colums = {CategoryKeywordData.SubCategory.CULUMN_NAME};
@@ -149,7 +149,7 @@ public class DBManager extends SQLiteOpenHelper {
         return -1;
     }
 
-    public long checkMainCategory(String category) {
+    private long checkMainCategory(String category) {
         String selection = CategoryKeywordData.MainCateory.CULUMN_NAME + "=?";
         String[] args = {"" + category};
         String[] colums = {CategoryKeywordData.MainCateory.CULUMN_NAME};
@@ -188,29 +188,74 @@ public class DBManager extends SQLiteOpenHelper {
 //
 //    }
 
-    public void getKeyword(int server_id) {
-    }
+    public String[] getKeyword(int server_id) {
+       List<String> temp = new ArrayList<>();
 
 
-//소분류 목록 가져오기
-    public List<String> getSubCategories(int main_server_id) {
-        List<String> categries = new ArrayList<>();
-        String selectQuery = "SELECT*FROM" + CategoryKeywordData.MainCateory.TABLE;
+
+        String selectQuery = "SELECT "+CategoryKeywordData.Category_Key.KEYWORD_ID+" FROM "
+                + CategoryKeywordData.Category_Key.TABLE+" WHERE "+CategoryKeywordData.Category_Key.MAIN_SERVER_ID+" = "+server_id;
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+// 여기서 조인하면 끝
         try {
-            if (cursor.moveToFirst()) {
-                do {
-                    categries.add(cursor.getString(1));
-                } while (cursor.moveToNext());
+            if (cursor.moveToNext()) {
+
+                temp.add(cursor.getString(0));
+
             }
         } finally {
             cursor.close();
         }
+        int length = temp.size();
+        String[] keyword   = temp.toArray(new String[length]);
 
 
-        return categries;
+        return keyword;
+    }
+
+
+//소분류 목록 가져오기
+    public String []getSubCategories(int main_server_id) {
+        List<String> categries = new ArrayList<>();
+        String selectQuery = "SELECT "+CategoryKeywordData.SubCategory.CULUMN_NAME+" FROM " + CategoryKeywordData.SubCategory.TABLE+" WHERE "+CategoryKeywordData.SubCategory.MAIN_SERVER_ID+" = "+main_server_id;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        try {
+            if (cursor.moveToNext()) {
+
+                    categries.add(cursor.getString(0));
+
+            }
+        } finally {
+            cursor.close();
+        }
+        int length = categries.size();
+
+        String[] arr= categries.toArray(new String [length]);
+
+
+        return arr;
+    }
+
+    public String getMainCategory(int main_server_id){
+        String selection   = CategoryKeywordData.MainCateory.SERVER_ID+"=?";
+        String [] args = {""+main_server_id};
+        String [] coulms = {CategoryKeywordData.MainCateory.CULUMN_NAME};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(CategoryKeywordData.MainCateory.TABLE,coulms,selection,args,null,null,null);
+        try {
+            if (c.moveToNext()) {
+                String  category = c.getString(c.getColumnIndex(CategoryKeywordData.MainCateory.CULUMN_NAME));
+                return category;
+            }
+        } finally {
+            c.close();
+        }
+
+        return null;
     }
 
     // 대분류 목록 가져오기
