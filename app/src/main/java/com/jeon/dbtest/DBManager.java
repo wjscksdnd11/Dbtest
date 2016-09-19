@@ -187,7 +187,7 @@ public class DBManager extends SQLiteOpenHelper {
 //
 //
 //    }
-
+//
     public String[] getKeyword(int server_id) {
        List<String> temp = new ArrayList<>();
 
